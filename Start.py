@@ -1,238 +1,151 @@
-
 from random import randint
+from time import sleep
 import math
 import pprint
-
-#PARTIE 1: CREATION DE LA BASE DE CONNAISSANCE
-# Nombre de points a cree dans la base de connaissance
+import os
+#PARTIE 1: CRÉATION DE LA BASE DE CONNAISSANCE
+#Nombre de points a crée dans la base de connaissance
 number = 1000
 
-# Le max pour X
-minRange = number * (-1)
-maxRange = number
+#Le max pour X
+minX = number * (-1)
+maxX = number
 
-# Je cree une liste pour evité les doublon lors de la creation des point
+#Je crée une liste dans la quel je vais stoker les points déjà généré pour évite les doublon
 listXUse = []
-
-print("Nous allons crée la base de connaissance")
-print("La fonction afine a*x+b")
-# On demande de saisire a
-a = input("Saisire a : ")
+print("Dans un premier temps nous allons crée la base de connaissance")
+print("La fonction afine: a*x+b")
+# On demande de saisir a
+a = input("Saisir a : ")
 a = int(a)
 
-# On demande de saisire b
-b = input("Saisire b : ")
+# On demande de saisir b
+b = input("Saisir b : ")
 b = int(b)
 
-i = 0
+print("Génération de 1000 points grâce a la fonction ",a,"*x+",b)
 
-#Je stock la base de connaissance dans une liste / tableau 
-BaseDeConnaissance = []
+i = 0
+#Je stock la base de connaissance dans un dictionnaire  
+BaseDeConnaissance = {}
 
 #Je genere les points de ma base
 while len(listXUse) < number :
-	x = randint(minRange, maxRange)
-
-#On verifie que il y a pas de doublon
+	x = randint(minX, maxX)
+#On verifie que X est pas un doublon
 	if x not in listXUse :
 		listXUse.append( x )
 		y = a*x+b
+		BaseDeConnaissance[str(i)] =  { 'x' : x, 'y' : y }
+		i += 1
+sleep(5.00)
+#PARTIE 2: Dans cette partie le neurone vas devoir retrouvé la fonction utilisé pour généré la base de connaissance juste en utilisent les 1000 points crée.
+#Défini la valeur maximal et minimal pour l'index de la BaseDeConnaissance
+minIndex = 0
+maxIndex = 999
 
-		PointGenere = ""
-		PointGenere += "("+str(x)+","+str(y)+")"
-#Si c'est pas un doublon je l'ajoute a la base de connaissance
-		BaseDeConnaissance.append(PointGenere)
-
-	i += 1
-
-print(BaseDeConnaissance)
-print("OK")
-print("1000 points genere !")
-
-#PARTIE 2: Le neurone 
-
-
-
-
-# Initalisation
-modeOpenFile = "r"
-fileAffine = "kdb/affine.txt"
-
-# object contain all the point written in the file
-dataList = {}
-# use to create the dataList
-index = 0
-
-# get file content
-with open(fileAffine) as f:
-	content = f.readlines()
-
-# each line into a array
-content = [x.strip() for x in content]
-
-# get each point
-for i in range(0, len(content) ):
-	array = content[i].split( "," )
-	#Remove the first char
-	x = int( str( array[0] )[1:] )
-	#Remove the last char
-	y = int( str( array[1] )[:-1] )
-	dataList[ str(index) ] =  { 'x' : x, 'y' : y }
-	index += 1
-
-# Define range for the random to get the index of hte dataList array
-minNumber = 0
-maxNumber = len(content)-1
-
-# list contain all point already use
+#Liste pour les points deja utilisé
 listPointUse = []
 
-# Begin
+#Le pas 
 step = 0.2
-
-# Take randomly a value for a
 a = randint(-100, 100)
-# Take randomly a value for b
 b = randint(-100, 100)
 
+#Méthode qui retourne un nombre aléatoire qui n'ai pas déjà utilisé
+def NombreAleatoire() :
+	global listPointUse,minIndex,maxIndex
+	NombreAleatoire = randint(minIndex, maxIndex)
+	while NombreAleatoire in listPointUse :
+		NombreAleatoire = randint(minIndex, maxIndex)
+	listPointUse.append(NombreAleatoire)
+	return NombreAleatoire
 
-# Function
+#Méthode pour calculer la somme
+def CalculeSomme(a,b,x) :
+	return round((a*x+b),1)
 
-# Global
+#Méthode pour calculer la différence
+def calcDifference(a,b,x,y) :
+	calc = y-(round(a*x,1)+b)
+	return round(abs(calc),1)
 
-# find a random number not already used
-def randNumber() :
-	global listPointUse,minNumber,maxNumber
-
-	number = randint(minNumber, maxNumber)
-
-	while number in listPointUse :
-		if maxNumber - len(listPointUse) < 20 :
-			# when we have use all points take the last
-			lastpoint = listPointUse[ len(listPointUse)-1 ]
-			# clean the list
-			listPointUse = []
-			# put again the last to not use the same twice
-			listPointUse.append( lastpoint )
-		number = randint(minNumber, maxNumber)
-
-	listPointUse.append( number )
-
-	return number
-
-
-# return a*x + b for the a,b and x parameter
-def calcSomme(a,b,x) :
-	return round( ( a * x + b ) , 1 )
-
-# return a y - a * x + b for the corresponding parameter
-def calcDiff(a,b,x,y) :
-	calc = y - ( round( a * x , 1 ) + b )
-	return round( abs(calc) ,1 )
-
-# compare somme with y
+#Méthode de comparaison avec Y
 def compare(somme, y) : 
-	return ( somme == y )
+	return (somme == y)
 
-
-# Pods A
-
-# Increase A with step
-def increaseA() :
+#Méthode pour ajoute le pas a "a"
+def AjoutePasA() :
 	global a, step
-	a = round( (a+step) , 1 )
+	a = round((a+step),1)
 
-# Decrease A with step
-def decreaseA() :
+#Méthode pour retire le pas a "a"
+def RetirePasA() :
 	global a, step
-	a = round( (a-step) , 1 )
+	a = round((a-step),1)
 
-
-# Pod B
-
-# Increase B with step
-def increaseB() : 
+#Méthode pour ajoute le pas a "b"
+def AjoutePasB() : 
 	global b, step
-	b = round( (b+step) , 1 )
+	b = round((b+step),1)
 
-# Decrease B with step
-def decreaseB() : 
+#Méthode pour retire le pas a "b"
+def RetirePasB() : 
 	global b,step
-	b = round( (b-step) , 1 )
+	b = round((b-step),1)
 
-
-# Begin
-find = 0 # first while
-findBis = 0 # second wile
-
+find = 0
+findBis = 0
+iteration = 0
 while find == 0 : 
 	while findBis == 0 :
-		# Take a point
-		index = randNumber()
+		iteration = iteration + 1
+		#On prend un points aleatoire dans la basse de connaissance
+		index = NombreAleatoire()
+		x = BaseDeConnaissance[str(index)]["x"]
+		y = BaseDeConnaissance[str(index)]["y"]
 
-		x = dataList[ str(index) ]["x"]
-		y = dataList[ str(index) ]["y"]
-
-		# Pods a :
-		# actualSum : y - a*x+b
-		actualSum = calcDiff(a,b,x,y)
-
-		# sumWithStep : y - (a+step)*x+b
-		sumWithStep = calcDiff( (a+step) ,b,x,y)
-
-		# sumWithoutStep : y - (a-step)*x+b
-		sumWithoutStep = calcDiff( (a-step), b,x,y)
+		#Calcule de la somme actuel
+		actualSum = calcDifference(a,b,x,y)
+		#Calcule de la difference avec le pas 
+		SommeAvecPas = calcDifference((a+step),b,x,y)
+		#Calcule de la difference sans le pas
+		SommeSansPas = calcDifference((a-step),b,x,y)
 		
-		if actualSum > sumWithStep :
-			# increase a
-			increaseA()
-		elif actualSum > sumWithoutStep :
-			# decrease a
-			decreaseA()
+		if actualSum > SommeAvecPas:
+			#On ajoute le pas a "a"
+			AjoutePasA()
+		elif actualSum > SommeSansPas:
+			#on retire le pas a "a"
+			RetirePasA()
 
-		# Pods b :
-		# actualSum (if a has change) : y - a*x+b
-		actualSum = calcDiff(a,b,x,y)
+		actualSum = calcDifference(a,b,x,y)
+		SommeAvecPas = calcDifference(a, (b+step) ,x,y)
+		SommeSansPas = calcDifference(a, (b-step) ,x,y)
 
-		# sumWithStep : y - a*x+(b+step)
-		sumWithStep = calcDiff(a, (b+step) ,x,y)
-		
-		# sumWithoutStep : y - a*x+(b-step)
-		sumWithoutStep = calcDiff(a, (b-step) ,x,y)
-
-		if actualSum > sumWithStep :
-			# increase b
-			increaseB()
-		elif actualSum > sumWithoutStep :
-			# decrease b
-			decreaseB()
-
-		somme = calcSomme( a , b , x )
-
+		if actualSum > SommeAvecPas :
+			#On ajoute le pas a "b"
+			AjoutePasB()
+		elif actualSum > SommeSansPas :
+			#on retire le pas a "b"
+			RetirePasB()
+		somme = CalculeSomme( a , b , x )
 		findBis = compare(somme, y)
 
-	# Check
-
-	# Take a point
-	index = randNumber()
-
-	x = dataList[ str(index) ]["x"]
-	y = dataList[ str(index) ]["y"]
-
-	somme = calcSomme( a,b,x )
-
+	#On reprend un nombre aléatoire pour tester 
+	index = NombreAleatoire()
+	x = BaseDeConnaissance[ str(index) ]["x"]
+	y = BaseDeConnaissance[ str(index) ]["y"]
+	somme = CalculeSomme( a,b,x )
 	find = compare(somme, y)
-
 	if find == 0 :
 		# reset findBis to restart the search for the value of each pod
 		findBis = 0
 
-#Result
-result = "The function is " + str(a) + "x"
-
+#Résulta
+Resulta = "La fonction pour généré les 1000 points de la base de donnée était  " + str(a) + "x"
 if b >= 0 :
-	result += "+"
-
-result += str(b) + "\n"
-
-print(result)
+	Resulta += "+"
+Resulta += str(b) + "\n"
+print(Resulta)
+print("La fonction a été trouvée grace a :", iteration," points dans la base")
