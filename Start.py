@@ -5,7 +5,7 @@ import pprint
 import os
 #PARTIE 1: CRÉATION DE LA BASE DE CONNAISSANCE
 #Nombre de points a crée dans la base de connaissance
-number = 1000
+number = 10000
 
 #Le max pour X
 minX = number * (-1)
@@ -23,7 +23,7 @@ a = int(a)
 b = input("Saisir b : ")
 b = int(b)
 
-print("Génération de 1000 points grâce a la fonction ",a,"*x+",b)
+print("Génération de 10000 points grâce a la fonction ",a,"*x+",b)
 
 i = 0
 #Je stock la base de connaissance dans un dictionnaire  
@@ -38,11 +38,11 @@ while len(listXUse) < number :
 		y = a*x+b
 		BaseDeConnaissance[str(i)] =  { 'x' : x, 'y' : y }
 		i += 1
-sleep(5.00)
+sleep(3.00)
 #PARTIE 2: Dans cette partie le neurone vas devoir retrouvé la fonction utilisé pour généré la base de connaissance juste en utilisent les 1000 points crée.
 #Défini la valeur maximal et minimal pour l'index de la BaseDeConnaissance
 minIndex = 0
-maxIndex = 999
+maxIndex = 9999
 
 #Liste pour les points deja utilisé
 listPointUse = []
@@ -74,26 +74,6 @@ def calcDifference(a,b,x,y) :
 def compare(somme, y) : 
 	return (somme == y)
 
-#Méthode pour ajoute le pas a "a"
-def AjoutePasA() :
-	global a, step
-	a = round((a+step),1)
-
-#Méthode pour retire le pas a "a"
-def RetirePasA() :
-	global a, step
-	a = round((a-step),1)
-
-#Méthode pour ajoute le pas a "b"
-def AjoutePasB() : 
-	global b, step
-	b = round((b+step),1)
-
-#Méthode pour retire le pas a "b"
-def RetirePasB() : 
-	global b,step
-	b = round((b-step),1)
-
 find = 0
 findBis = 0
 iteration = 0
@@ -114,10 +94,10 @@ while find == 0 :
 		
 		if actualSum > SommeAvecPas:
 			#On ajoute le pas a "a"
-			AjoutePasA()
+			a = round((a+step),1)
 		elif actualSum > SommeSansPas:
 			#on retire le pas a "a"
-			RetirePasA()
+			a = round((a-step),1)
 
 		actualSum = calcDifference(a,b,x,y)
 		SommeAvecPas = calcDifference(a, (b+step) ,x,y)
@@ -125,10 +105,10 @@ while find == 0 :
 
 		if actualSum > SommeAvecPas :
 			#On ajoute le pas a "b"
-			AjoutePasB()
+			b = round((b+step),1)
 		elif actualSum > SommeSansPas :
 			#on retire le pas a "b"
-			RetirePasB()
+			b = round((b-step),1)
 		somme = CalculeSomme( a , b , x )
 		findBis = compare(somme, y)
 
@@ -143,7 +123,7 @@ while find == 0 :
 		findBis = 0
 
 #Résulta
-Resulta = "La fonction pour généré les 1000 points de la base de donnée était  " + str(a) + "x"
+Resulta = "La fonction pour généré les 10000 points de la base de donnée était  " + str(a) + "x"
 if b >= 0 :
 	Resulta += "+"
 Resulta += str(b) + "\n"
