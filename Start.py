@@ -1,8 +1,10 @@
 from random import randint
 from time import sleep
+import matplotlib.pyplot as plt
 import math
 import pprint
 import os
+
 #PARTIE 1: CRÉATION DE LA BASE DE CONNAISSANCE
 #Nombre de points a crée dans la base de connaissance
 number = 10000
@@ -28,7 +30,8 @@ print("Génération de 10000 points grâce a la fonction ",a,"*x+",b)
 i = 0
 #Je stock la base de connaissance dans un dictionnaire  
 BaseDeConnaissance = {}
-
+Pointx = []
+Pointy = []
 #Je genere les points de ma base
 while len(listXUse) < number :
 	x = randint(minX, maxX)
@@ -37,8 +40,15 @@ while len(listXUse) < number :
 		listXUse.append( x )
 		y = a*x+b
 		BaseDeConnaissance[str(i)] =  { 'x' : x, 'y' : y }
+		Pointx.append(int(x))
+		Pointy.append(int(y))
 		i += 1
-sleep(3.00)
+
+#On affiche la fonction afine
+plt.plot(Pointx, Pointy)
+plt.axis([-100, 100, -100, 100])
+plt.show()
+
 #PARTIE 2: Dans cette partie le neurone vas devoir retrouvé la fonction utilisé pour généré la base de connaissance juste en utilisent les 1000 points crée.
 #Défini la valeur maximal et minimal pour l'index de la BaseDeConnaissance
 minIndex = 0
